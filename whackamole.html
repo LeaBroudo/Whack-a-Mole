@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>        
+        body {
+            background-color: rgb(1,137,63);
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #game {
+            display: inline-block;
+            width: 250px;
+            height: 400px;
+            margin-top: 50px
+        }
+        
+        #vals {
+            margin-bottom: 20px;
+        }
+        
+        #holes {
+            margin-top: 25px;
+            background-color: #01893f;
+        }
+
+        .hole {
+            width: 25%;
+            height: 25%;
+        }
+
+        #words {
+            font-size: 85%;
+            color: yellow;
+        }
+
+        #numbers {
+            font-size: 250%;
+            color: white;
+        }
+
+        #reset {
+            margin-top: 30px;
+        }
+
+        #finished {
+            visibility: hidden;
+            color: white;
+        }
+
+        .button {
+            background-color: rgb(1,137,63);
+            border: 1px solid yellowgreen;
+            color: yellow;
+            padding: 10px 40px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            border-radius: 7px;
+        }
+        
+        .lAlign {
+            float: left;
+        }
+
+        .rAlign {
+            float: right;
+        }
+    </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        
+        var time = 60;
+        var score = 0
+        var liveMoles = {}
+
+        $(document).ready(function() {
+
+            window.setInterval(function(){  
+                countDown();
+                showMole();
+                
+                for (mole in liveMoles) {
+                    liveMoles[mole] += 1;
+                    if (liveMoles[mole] > 3) {
+                        $("#"+mole).attr("src", "hole.png");
+                        delete liveMoles[mole];
+                    }
+                }
+
+            }, 1000);
+            
+            $(".button").click(function() {
+                time = 60;
+                score = 0;
+                $("#timer").html(time);
+                $("#score").html(score);
+                
+                //All moles dissapear 
+                for (mole in liveMoles) {
+                    $("#"+mole).attr("src", "hole.png");
+                    delete liveMoles[mole];
+                }
+
+                $("#finished").css("visibility", "hidden");
+            });
+        
+            $(".hole").click(function() {
+                var holeId = $(this).attr("id");
+                wackMole(holeId); 
+            });
+            
+        });
+
+        function countDown() {
+            
+            $("#timer").html(time);
+            
+            if (time > 0) {
+                time--;
+            } else {
+                
+                //All moles dissapear 
+                for (mole in liveMoles) {
+                    $("#"+mole).attr("src", "hole.png");
+                    delete liveMoles[mole];
+                }
+
+                //displays message
+                $("#finished").css("visibility", "visible");
+
+            }
+        }
+
+        function showMole() {
+            
+            if (time > 0) {  //so that no moles appear when game is not running
+                var timeRand = Math.floor(Math.random() * 5000)+1000; //Generate Random number between 1000-6000 (0-5 secs)
+                setTimeout(showMole, timeRand); 
+
+                var moleHole = Math.floor(Math.random() * 9 ); //Generate Random hole number between 0-8 
+
+                if (!(moleHole in liveMoles)) {
+                    $("#"+moleHole).attr("src", "mole.png");
+                    liveMoles[moleHole] = 0;
+                }
+
+            }
+
+        }
+
+        function wackMole( holeNum ) {
+
+            if ($("#"+holeNum).attr("src") != "hole.png") {
+
+                $("#"+holeNum).attr("src", "hole.png");
+                delete liveMoles[holeNum];
+                
+                score++;
+                $("#score").html(score);
+
+            }
+
+        }
+
+    </script>
+</head>
+<body>
+    <div id="game">
+        <div id="vals">
+            <div id="words">
+                <span class="lAlign">Timer:</span>
+                <span class="rAlign">Score:</span>
+            </div>
+            <br>
+            <div id="numbers">
+                <span id="timer" class="lAlign">60</span>
+                <span id="score" class="rAlign">0</span>
+            </div>
+        </div>
+        <br>
+        <div id="holes">
+            <div>
+                <img id="0" class="hole lAlign" src="hole.png" alt="HOLE">
+                <img id="1" class="hole" src="hole.png" alt="HOLE">
+                <img id="2" class="hole rAlign" src="hole.png" alt="HOLE">
+            </div>
+            <br>
+            <div>
+                <img id="3" class="hole lAlign" src="hole.png" alt="HOLE">
+                <img id="4" class="hole" src="hole.png" alt="HOLE">
+                <img id="5" class="hole rAlign" src="hole.png" alt="HOLE">
+            </div>
+            <br>
+            <div>
+                <img id="6" class="hole lAlign" src="hole.png" alt="HOLE">
+                <img id="7" class="hole" src="hole.png" alt="HOLE">
+                <img id="8" class="hole rAlign" src="hole.png" alt="HOLE">
+            </div>
+            <br>
+        </div>
+        <div id="finished">
+            The game is over, click the "Reset Game" button to play again!
+        </div>
+        <div id="reset">
+            <button class="button">Reset Game</button>
+        </div>
+        
+    </div>
+
+</body>
+</html>
